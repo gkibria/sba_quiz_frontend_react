@@ -1,0 +1,28 @@
+.container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+}
+
+.notification {
+    box-shadow: 0 0 10px #999;
+    animation: from-right 300ms;
+}
+
+@keyframes from-right {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .container {
+        left: 20px;
+    }
+}
