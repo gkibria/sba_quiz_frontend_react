@@ -71,7 +71,7 @@ const NavBar = (props) => {
 
                {isLoggegIn && (
                   <div className="navbar-item has-dropdown is-hoverable">
-                     <a className="navbar-link">{user.username}</a>
+                     <a className="navbar-link">{user.email}</a>
 
                      <div className="navbar-dropdown">
                         <a className="navbar-item">About</a>

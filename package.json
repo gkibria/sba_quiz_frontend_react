@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@directus/sdk": "^10.1.4",
     "axios": "^0.27.2",
     "bulma": "^0.9.4",
     "react": "^18.2.0",

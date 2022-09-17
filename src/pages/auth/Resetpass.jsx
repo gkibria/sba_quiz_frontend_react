@@ -1,7 +1,10 @@
 import { Link, useSearchParams } from "react-router-dom"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Input from "../../components/ui/Input"
 import Button from "../../components/ui/Button"
+import { Helmet } from "react-helmet"
+import useAuth from "../../hooks/use-auth"
+import { useNotify } from "../../context/notification"
 
 const formInputs = [
    {
@@ -44,19 +47,32 @@ const formInputs = [
 
 const Resetpass = () => {
    const [params] = useSearchParams()
-   const isResetMode = params.get("mode") === "reset"
+   const auth = useAuth()
+   const { notify } = useNotify()
+   const isResetMode = params.has("token")
    const [resetData, setResetData] = useState({
       email: "",
       token: "",
       password: "",
+      reset_url: "",
    })
    let conditionalInputs = []
 
    if (!isResetMode) {
       conditionalInputs = formInputs.filter((item) => item.name === "email")
    } else {
-      conditionalInputs = formInputs
+      conditionalInputs = formInputs.filter(
+         (item) => item.name === "password" || item.name === "token"
+      )
    }
+
+   useEffect(() => {
+      setResetData({
+         ...resetData,
+         token: params.get("token"),
+         reset_url: window.location.href,
+      })
+   }, [])
 
    const onChangeInput = (e) => {
       setResetData({
@@ -69,11 +85,55 @@ const Resetpass = () => {
       e.preventDefault()
       if (e.target.checkValidity()) {
          console.log(resetData)
+         if (!isResetMode) {
+            _sendResetRequest()
+         } else {
+            auth.passwordReset(resetData)
+         }
+      }
+   }
+
+   const _sendResetRequest = async () => {
+      try {
+         await auth.passwordResetRequest(resetData)
+         setResetData({
+            ...resetData,
+            email: "",
+         })
+         notify({
+            type: "is-success",
+            msg: "If you have an account with us, you shoud get an email!",
+         })
+      } catch (error) {
+         console.log(error)
+         notify({
+            type: "is-danger",
+            msg: error?.response?.data?.errors?.[0].message,
+         })
+      }
+   }
+
+   const _resetPassword = async () => {
+      try {
+         await auth.passwordReset(resetData)
+         notify({
+            type: "is-success",
+            msg: "If you have an account with us, you shoud get an email!",
+         })
+      } catch (error) {
+         console.log(error)
+         notify({
+            type: "is-danger",
+            msg: error?.response?.data?.errors?.[0].message,
+         })
       }
    }
 
    return (
       <>
+         <Helmet>
+            <title>SBA Quiz Reset Password</title>
+         </Helmet>
          <div className="columns is-centered is-mobile">
             <div className="column box is-4-desktop m-5">
                <h3 className="subtitle has-text-centered has-text-info">
@@ -95,19 +155,20 @@ const Resetpass = () => {
                   <Button
                      color={"is-primary"}
                      className="is-right"
+                     isLoading={auth.isLoading}
                   >
                      {isResetMode
                         ? "Reset Password"
-                        : "Send Password Reset Code"}
+                        : "Send Password Reset Instruction"}
                   </Button>
                </form>
             </div>
          </div>
          <div className="block has-text-centered">
-            {!isResetMode && (
+            {/* {!isResetMode && (
                <>
                   <Link
-                     to="?mode=reset"
+                     to="?token=reset"
                      className="button is-light has-text-weight-bold"
                   >
                      I have a reset code
@@ -115,7 +176,7 @@ const Resetpass = () => {
                   <br />
                   <br />
                </>
-            )}
+            )} */}
             <Link
                to="/auth/login"
                className="button is-primary is-inverted has-text-weight-bold"

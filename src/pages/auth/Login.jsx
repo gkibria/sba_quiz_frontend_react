@@ -13,7 +13,7 @@ const formInputs = [
       label: "Username",
       type: "text",
       value: "",
-      placeholder: "Enter your username",
+      placeholder: "username is usually email",
       required: true,
       patern: null,
       errMsg: "Username is required",
@@ -49,20 +49,18 @@ const Login = () => {
       })
    }
 
-   const loginHandler = (e) => {
+   const loginHandler = async (e) => {
       e.preventDefault()
       if (e.target.checkValidity()) {
          console.log(loginData)
          try {
-            localStorage.setItem("sba-token", "token")
-            localStorage.setItem("sba-user", JSON.stringify(loginData))
-            notify({
-               type: "is-success",
-               msg: "Logged In Success! Now you can use SBA quiz interface",
-            })
-            navigate("/")
+            await auth.logIn(loginData)
          } catch (error) {
             console.log(error)
+            notify({
+               type: "is-danger",
+               msg: error?.response?.data?.errors?.[0].message,
+            })
          }
 
          // notify({
@@ -97,6 +95,7 @@ const Login = () => {
                   <Button
                      color={"is-primary"}
                      className="is-right"
+                     isLoading={auth.isLoading}
                   >
                      Login
                   </Button>
