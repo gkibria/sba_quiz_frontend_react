@@ -64,6 +64,7 @@ const QuizAdmin = () => {
                         placeholder="search"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
+                        onKeyUp={(e) => e.key === "Enter" && fetchData()}
                      />
                   </p>
                   <p className="control">
