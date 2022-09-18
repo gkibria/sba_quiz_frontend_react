@@ -12,7 +12,7 @@ const useAxios = () => {
 
    const axiosClient = axios.create()
 
-   axiosClient.defaults.baseURL = "https:/directus.gkibria.com"
+   axiosClient.defaults.baseURL = "https://directus.gkibria.com"
 
    axiosClient.defaults.headers = {
       "Content-Type": "application/json",
