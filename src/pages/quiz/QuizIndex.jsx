@@ -8,12 +8,17 @@ import { Helmet } from "react-helmet"
 import useLoadMore from "../../hooks/use-loadmore"
 
 const QuizIndex = () => {
-   const [quizList, setQuizList] = useState([])
-   const { paging, updatePagingInfo } = useLoadMore({
-      recordPerPage: 20,
-   })
-   // const auth = useAuth({ checkAuth: true })
+   // const [quizList, setQuizList] = useState([])
    const quiz = useQuiz()
+   const {
+      paging,
+      updatePagingInfo,
+      fetchData,
+      data: quizList,
+   } = useLoadMore({
+      recordPerPage: 20,
+      fetchFnc: quiz.getList,
+   })
 
    const getQuizList = async () => {
       try {
@@ -30,7 +35,7 @@ const QuizIndex = () => {
    }
 
    useEffect(() => {
-      getQuizList()
+      fetchData()
    }, [])
 
    return (
@@ -43,7 +48,7 @@ const QuizIndex = () => {
             <div className="block has-text-centered">
                <Button
                   isLoading={quiz.isLoading}
-                  onClick={getQuizList}
+                  onClick={fetchData}
                >
                   Load More
                </Button>
