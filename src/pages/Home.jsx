@@ -1,30 +1,35 @@
 import { useState, useEffect } from "react"
-import useHttp from "../hooks/use-http"
-import useApi from "../hooks/use-api"
-import useAuth from "../hooks/use-auth"
 import { Helmet } from "react-helmet"
 import Button from "../components/ui/Button"
 import study from "../assets/study.svg"
 import QuizList from "../components/quiz/QuizList"
+import useQuiz from "../hooks/use-quiz"
+import Loading from "../components/Loading"
 
 const Home = () => {
-   const { isLoggegIn } = useAuth()
-   const [users, setUsers] = useState()
-   // const { get, isLoading, error } = useHttp();
-   const { auth, isLoading, error } = useApi()
+   const [quizList, setQuizList] = useState([])
+   const quiz = useQuiz()
 
-   const fetchUser = async () => {
-      // const res = await get('https://jsonplaceholder.typicode.com/users');
-      const res = await auth.getUsers()
-      setUsers(res.data)
+   const getQuizList = async () => {
+      try {
+         const { data, meta } = await quiz.getList({
+            limit: 6,
+         })
+         setQuizList((oldData) => oldData.concat(data))
+      } catch (error) {
+         console.log(error)
+      }
    }
 
    useEffect(() => {
-      // fetchUser();
+      getQuizList()
    }, [])
 
    return (
       <>
+         <Helmet>
+            <title>SBA [Single Best Answer] Quiz</title>
+         </Helmet>
          <section className="section has-background-success-light">
             <div className="container">
                <div className="columns is-vcentered is-multiline">
@@ -35,7 +40,7 @@ const Home = () => {
                      <h2 className="is-size-2-desktop subtitle">
                         By making Quiz
                      </h2>
-                     <p>Learning by doing!</p>
+                     <p>Learning by doing is the best afterall!</p>
                   </div>
                   <div className="column is-4-desktop is-6-tablet has-text-centered">
                      <img
@@ -61,7 +66,11 @@ const Home = () => {
             </div>
          </section>
 
-         <QuizList />
+         {quiz.isLoading && !quizList.length && <Loading />}
+         <QuizList
+            quizList={quizList}
+            title="Popular Quiz"
+         />
       </>
    )
 }

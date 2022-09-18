@@ -7,6 +7,7 @@ import Login from "./pages/auth/Login"
 import Register from "./pages/auth/Register"
 import Resetpass from "./pages/auth/Resetpass"
 import Home from "./pages/Home"
+import QuizAdmin from "./pages/quiz-admin/QuizAdmin"
 import QuizIndex from "./pages/quiz/QuizIndex"
 import QuizPage from "./pages/quiz/QuizPage"
 
@@ -47,6 +48,15 @@ function App() {
                   <Route
                      path="resetpass"
                      element={<Resetpass />}
+                  />
+               </Route>
+               <Route
+                  path="/quiz-admin"
+                  element={<DefaultLayout />}
+               >
+                  <Route
+                     index
+                     element={<QuizAdmin />}
                   />
                </Route>
             </Routes>

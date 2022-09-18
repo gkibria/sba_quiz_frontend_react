@@ -1,43 +1,55 @@
 import React, { useEffect, useState } from "react"
 import QuizList from "../../components/quiz/QuizList"
 import useAuth from "../../hooks/use-auth"
-// import { Directus } from "@directus/sdk"
-import useDirectus from "../../hooks/use-directus"
-
-// const directus = new Directus("http://localhost:8055/")
+import useQuiz from "../../hooks/use-quiz"
+import Button from "../../components/ui/Button"
+import Loading from "../../components/Loading"
+import { Helmet } from "react-helmet"
+import useLoadMore from "../../hooks/use-loadmore"
 
 const QuizIndex = () => {
-   const [drugs, setDrugs] = useState()
-   const { directus, isLoading, error } = useDirectus()
-   const fetchData = async () => {
-      try {
-         const res = await directus.items("drug_brand").readByQuery({
-            fields: "name,strength,price,generic_id.name,company_id.name",
-         })
-         console.log(res.data)
-         setDrugs(res.data)
+   const [quizList, setQuizList] = useState([])
+   const { paging, updatePagingInfo } = useLoadMore({
+      recordPerPage: 20,
+   })
+   // const auth = useAuth({ checkAuth: true })
+   const quiz = useQuiz()
 
-         // const login = await directus.auth.login({
-         //    email: "kibria@medicbd.com",
-         //    password: "1234qwer",
-         // })
-         // const logout = await directus.auth.logout()
-         // console.log(login, logout)
+   const getQuizList = async () => {
+      try {
+         const { data, meta } = await quiz.getList({
+            page: paging.page,
+            limit: paging.recordPerPage,
+         })
+         // console.log(data, meta, paging)
+         setQuizList((oldData) => oldData.concat(data))
+         updatePagingInfo(meta?.total_count)
       } catch (error) {
-         console.log(error.message)
+         console.log(error)
       }
    }
 
    useEffect(() => {
-      fetchData()
+      getQuizList()
    }, [])
-   const {} = useAuth({ checkAuth: true })
+
    return (
       <>
-         <QuizList />
-         {isLoading && <p>Loading</p>}
-         {error && <pre>{JSON.stringify(error, null, 4)}</pre>}
-         <pre>{drugs && JSON.stringify(drugs, null, 4)}</pre>
+         <Helmet>
+            <title>SBA Quiz Listing</title>
+         </Helmet>
+         <QuizList quizList={quizList} />
+         {paging.nextPage && (
+            <div className="block has-text-centered">
+               <Button
+                  isLoading={quiz.isLoading}
+                  onClick={getQuizList}
+               >
+                  Load More
+               </Button>
+            </div>
+         )}
+         {quiz.isLoading && !quizList.length && <Loading />}
       </>
    )
 }

@@ -20,7 +20,7 @@ const useAxios = () => {
    }
 
    // All request will wait 2 seconds before timeout
-   axiosClient.defaults.timeout = 2000
+   axiosClient.defaults.timeout = 5000
 
    axiosClient.defaults.withCredentials = true
 

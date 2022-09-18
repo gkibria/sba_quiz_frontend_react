@@ -5,78 +5,37 @@ import Icon from "../ui/Icon"
 const latestQuiz = [
    {
       id: 1,
-      name: "Front of the thigh",
-      subjects: [
-         { id: 1, name: "Anatomy" },
-         { id: 30, name: "Neurology" },
-      ],
+      title: "Front of the thigh",
+      tags: ["Anatomy", "Neurology"],
       difficulty: "Easy",
-      user: {
+      user_created: {
          id: 1,
-         name: "Mohammad Golam Kibria",
-      },
-   },
-   {
-      id: 2,
-      name: "Motor neuron pathway",
-      subjects: [{ id: 1, name: "Anatomy" }],
-      difficulty: "Medium",
-      user: {
-         id: 1,
-         name: "Sumon Patwari",
-      },
-   },
-   {
-      id: 3,
-      name: "Renal Physiology",
-      subjects: [{ id: 1, name: "Physiology" }],
-      difficulty: "Hard",
-      user: {
-         id: 1,
-         name: "Milton Kumar Das",
-      },
-   },
-   {
-      id: 4,
-      name: "Cardiac Physiology",
-      subjects: [{ id: 1, name: "Physiology" }],
-      difficulty: "Hard",
-      user: {
-         id: 1,
-         name: "Milton Kumar Das",
-      },
-   },
-   {
-      id: 5,
-      name: "Arrythmia",
-      subjects: [{ id: 1, name: "Cardiology" }],
-      difficulty: "Hard",
-      user: {
-         id: 1,
-         name: "Milton Kumar Das",
+         first_name: "Mohammad Golam",
+         last_name: "Kibria",
       },
    },
 ]
 
-const QuizList = ({ title = "Latest Quiz" }) => {
+const QuizList = ({ title = "Latest Quiz", quizList = [] }) => {
    return (
       <div className="section">
          <div className="container">
             <h3 className="title has-text-centered is-size-4">{title}</h3>
             <div className="columns is-multiline">
-               {latestQuiz.map((quiz) => (
-                  <QuizItem
-                     key={quiz.id}
-                     {...quiz}
-                  />
-               ))}
+               {quizList &&
+                  quizList.map((quiz) => (
+                     <QuizItem
+                        key={quiz.id}
+                        {...quiz}
+                     />
+                  ))}
             </div>
          </div>
       </div>
    )
 }
 
-const QuizItem = ({ id, name, subjects, difficulty, user }) => {
+const QuizItem = ({ id, title, tags, difficulty = "Easy", user_created }) => {
    const badgeType = (badge) => {
       const badgeType = {
          Easy: "is-info",
@@ -93,26 +52,32 @@ const QuizItem = ({ id, name, subjects, difficulty, user }) => {
                   <Icon
                      name="folder"
                      color="dark"
-                     text={name}
+                     text={title}
                   />
                </h4>
-               {subjects.length && (
+               {tags && tags.length && (
                   <span className="tags mb-0">
-                     {subjects.map((item) => (
+                     {tags.map((item) => (
                         <span
                            className="tag"
-                           key={item.id}
+                           key={Math.random()}
                         >
-                           {item.name}
+                           {item}
                         </span>
                      ))}
+                  </span>
+               )}
+
+               {!tags && (
+                  <span className="tags mb-0">
+                     <span className="tag">not tagged</span>
                   </span>
                )}
 
                <p className="is-size-7 has-text-weight-medium has-text-grey">
                   <Icon
                      name="account"
-                     text={user.name}
+                     text={`${user_created.first_name} ${user_created.last_name}`}
                   />
                </p>
                <span

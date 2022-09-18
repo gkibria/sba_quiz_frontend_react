@@ -74,6 +74,13 @@ const NavBar = (props) => {
                      <a className="navbar-link">{user.email}</a>
 
                      <div className="navbar-dropdown">
+                        <Link
+                           to="/quiz-admin"
+                           className="navbar-item"
+                           onClick={toggleMenu}
+                        >
+                           Quiz Admin
+                        </Link>
                         <a className="navbar-item">About</a>
                         <a className="navbar-item">Jobs</a>
                         <a className="navbar-item">Contact</a>
